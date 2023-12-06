@@ -1,6 +1,6 @@
 ci:
-  autoupdate_commit_msg: "chore: update pre-commit hooks"
-  autofix_commit_msg: "style: pre-commit fixes"
+  autoupdate_commit_msg: "⬆️🪝 update pre-commit hooks"
+  autofix_commit_msg: "🎨 pre-commit fixes"
   autoupdate_schedule: "quarterly"
 
 exclude: "^({{cookiecutter\\.project_name}}|hooks/pre_gen_project.py$)"
@@ -42,21 +42,6 @@ repos:
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.7.1"
-    hooks:
-      - id: mypy
-        files: "(src|tests)"
-        args: []
-        additional_dependencies:
-          - click
-          - markdown-it-py
-          - pytest
-          - repo-review
-          - rich
-          - tomli
-          - types-PyYAML
-
   - repo: https://github.com/pre-commit/mirrors-prettier
     rev: "v3.1.0"
     hooks:
@@ -68,7 +53,6 @@ repos:
     rev: "v2.2.6"
     hooks:
       - id: codespell
-        exclude: ^Gemfile\.lock$
         args: ["-Lnd", "-w"]
 
   - repo: local
@@ -77,14 +61,8 @@ repos:
         name: Disallow improper capitalization
         language: pygrep
         entry: PyBind|Numpy|Cmake|CCache|Github|PyTest
-        exclude: (.pre-commit-config.yaml|docs/pages/guides/style\.md)$
+        exclude: (.pre-commit-config.yaml)$
       - id: disallow-bad-permalinks
         name: Disallow _ in permalinks
         language: pygrep
         entry: "^permalink:.*_.*"
-      - id: cog
-        name: Cog the pages
-        language: python
-        entry: cog -P -r -I ./helpers
-        files: "^docs/pages/guides/(packaging_compiled|docs|tasks).md|^copier.yml"
-        additional_dependencies: [cogapp, cookiecutter]

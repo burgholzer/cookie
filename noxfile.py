@@ -26,7 +26,6 @@ from typing import Any
 import nox
 
 nox.needs_version = ">=2022.1.7"
-nox.options.sessions = ["rr_lint", "rr_tests", "rr_pylint", "readme"]
 
 DIR = Path(__file__).parent.resolve()
 with DIR.joinpath("cookiecutter.json").open() as f:
@@ -378,7 +377,6 @@ def pc_bump(session: nox.Session) -> None:
     session.install("lastversion")
     versions = {}
     pages = [
-        Path("docs/pages/guides/style.md"),
         Path("{{cookiecutter.project_name}}/.pre-commit-config.yaml"),
         Path(".pre-commit-config.yaml"),
     ]
@@ -434,11 +432,7 @@ def gha_bump(session: nox.Session) -> None:
     """
     Bump the GitHub Actions.
     """
-    pages = list(Path("docs/pages/guides").glob("gha_*.md"))
-    pages.extend(Path("{{cookiecutter.project_name}}/.github/workflows").iterdir())
-    pages.append(Path("docs/pages/guides/style.md"))
-    pages.append(Path("docs/pages/guides/tasks.md"))
-    pages.append(Path("docs/pages/guides/coverage.md"))
+    pages = list(Path("{{cookiecutter.project_name}}/.github/workflows").iterdir())
     full_txt = "\n".join(page.read_text() for page in pages)
 
     # This assumes there is a single version per action
@@ -457,71 +451,3 @@ def gha_bump(session: nox.Session) -> None:
                     f"uses: {repo}@{old_version}", f"uses: {repo}@{new_version}"
                 )
                 page.write_text(txt)
-
-
-# -- Repo review --
-
-
-@nox.session
-def readme(session: nox.Session) -> None:
-    """
-    Update the readme with cog. Pass --check to check instead.
-    """
-
-    args = session.posargs or ["-r"]
-
-    session.install("-e.", "cogapp", "repo-review>=0.8")
-    session.run("cog", "-P", *args, "README.md")
-
-
-@nox.session(reuse_venv=True)
-def rr_run(session: nox.Session) -> None:
-    """
-    Run sp-repo-review.
-    """
-
-    session.install("-e.[cli]")
-    session.run("python", "-m", "repo_review", *session.posargs)
-
-
-@nox.session
-def rr_lint(session: nox.Session) -> None:
-    """
-    Run the linter.
-    """
-    session.install("pre-commit")
-    session.run("pre-commit", "run", "--all-files", *session.posargs)
-
-
-@nox.session
-def rr_pylint(session: nox.Session) -> None:
-    """
-    Run PyLint.
-    """
-    # This needs to be installed into the package environment, and is slower
-    # than a pre-commit check
-    session.install("-e.[cli]", "pylint")
-    session.run("pylint", "src", *session.posargs)
-
-
-@nox.session
-def rr_tests(session: nox.Session) -> None:
-    """
-    Run the unit and regular tests for sp-repo-review.
-    """
-    session.install("-e.[test,cli]")
-    session.run("pytest", *session.posargs)
-
-
-@nox.session(reuse_venv=True)
-def rr_build(session: nox.Session) -> None:
-    """
-    Build an SDist and wheel for sp-repo-review.
-    """
-
-    build_p = DIR.joinpath("build")
-    if build_p.exists():
-        shutil.rmtree(build_p)
-
-    session.install("build")
-    session.run("python", "-m", "build")
