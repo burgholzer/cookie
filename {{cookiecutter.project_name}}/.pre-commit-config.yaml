@@ -3,14 +3,29 @@ ci:
   autofix_commit_msg: "🎨 pre-commit fixes"
 
 repos:
+  # Clean jupyter notebooks
+  - repo: https://github.com/srstevenson/nb-clean
+    rev: 3.1.0
+    hooks:
+      - id: nb-clean
+
+  # Handling unwanted unicode characters
+  - repo: https://github.com/sirosen/texthooks
+    rev: 0.6.3
+    hooks:
+      - id: fix-ligatures
+      - id: fix-smartquotes
+
+  # Run Black on examples in the documentation
   - repo: https://github.com/adamchainz/blacken-docs
-    rev: "1.16.0"
+    rev: 1.16.0
     hooks:
       - id: blacken-docs
         additional_dependencies: [black==23.*]
 
+  # Standard hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.5.0"
+    rev: v4.5.0
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -25,39 +40,55 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
 
+  # Check for common mistakes
   - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: "v1.10.0"
+    rev: v1.10.0
     hooks:
       - id: rst-backticks
       - id: rst-directive-colons
       - id: rst-inline-touching-normal
 
+  # Format configuration files with prettier
   - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.1.0"
+    rev: v3.1.0
     hooks:
       - id: prettier
         types_or: [yaml, markdown, html, css, scss, javascript, json]
         args: [--prose-wrap=always]
 
+  # Python linting using ruff
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.1.6"
+    rev: v0.1.6
     hooks:
       - id: ruff
         args: ["--fix", "--show-fixes"]
+        types_or: [python, pyi, jupyter]
       - id: ruff-format
+        types_or: [python, pyi, jupyter]
 
-{%- if cookiecutter.backend in ["pybind11", "skbuild", "mesonpy"] %}
+{%- if cookiecutter.backend in ["skbuild"] %}
 
+  # Clang-format the C++ part of the code base automatically
   - repo: https://github.com/pre-commit/mirrors-clang-format
-    rev: "v17.0.6"
+    rev: v17.0.6
     hooks:
       - id: clang-format
         types_or: [c++, c, cuda]
 
+  # CMake format and lint the CMakeLists.txt files
+  - repo: https://github.com/cheshirekow/cmake-format-precommit
+    rev: v0.6.13
+    hooks:
+      - id: cmake-format
+        additional_dependencies: [pyyaml]
+      - id: cmake-lint
+        additional_dependencies: [pyyaml]
+
 {%- endif %}
 
+  # Static type checking using mypy
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.7.1"
+    rev: v1.7.1
     hooks:
       - id: mypy
         files: src|tests
@@ -65,16 +96,20 @@ repos:
         additional_dependencies:
           - pytest
 
+  # Check for spelling
   - repo: https://github.com/codespell-project/codespell
-    rev: "v2.2.6"
+    rev: v2.2.6
     hooks:
       - id: codespell
+        args: ["-L", "wille,linz", "--skip", "*.ipynb"]
 
+  # Check for common shell script mistakes
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: "v0.9.0.6"
+    rev: v0.9.0.6
     hooks:
       - id: shellcheck
 
+  # Catch common capitalization mistakes
   - repo: local
     hooks:
       - id: disallow-caps
@@ -83,15 +118,7 @@ repos:
         entry: PyBind|Numpy|Cmake|CCache|Github|PyTest|Mqt|Tum
         exclude: .pre-commit-config.yaml
 
-{%- if cookiecutter.backend == "skbuild" %}
-
-  - repo: https://github.com/cheshirekow/cmake-format-precommit
-    rev: "v0.6.13"
-    hooks:
-      - id: cmake-format
-
-{%- endif %}
-
+  # Check for common mistakes in the pyproject.toml file
   - repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.15
     hooks:
@@ -104,9 +131,17 @@ repos:
           [cibuildwheel, tomli, packaging, trove-classifiers]
 {%- endif %}
 
+  # Check for common mistakes in JSON configuration files
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.27.0
     hooks:
       - id: check-dependabot
       - id: check-github-workflows
       - id: check-readthedocs
+
+  # Check best practices for scientific Python code
+  - repo: https://github.com/scientific-python/cookie
+    rev: 2023.11.17
+    hooks:
+      - id: sp-repo-review
+        additional_dependencies: ["repo-review[cli]"]
