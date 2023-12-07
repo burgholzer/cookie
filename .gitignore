@@ -140,18 +140,32 @@ cython_debug/
 # setuptools_scm
 src/*/_version.py
 
-# Jeykll stuff
-.jekyll-cache/
-.jekyll-metadata
-_site/
+# SKBuild cache dir
+_skbuild/
 
-# NodeJS stuff, just in case (developer tooling)
-node_modules/
-package-lock.json
-package.json
+# Common editor files
+*~
+*.swp
 
-# readthedocs
-_readthedocs
+# RPM spec file
+!/distro/*.spec
+/distro/*.tar.gz
+*.rpm
 
-# Default cookiecutter output
-/package
+# ruff
+.ruff_cache/
+
+# OS specific stuff
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+.idea/
+.vscode/
+
+.vs
+out/build

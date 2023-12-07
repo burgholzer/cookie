@@ -1,10 +1,12 @@
+"""Sphinx configuration file."""
+
 from __future__ import annotations
 
 import importlib.metadata
 
-project = "{{ cookiecutter.project_name }}"
-copyright = "{{ cookiecutter.__year }}, {{ cookiecutter.full_name }}"
-author = "{{ cookiecutter.full_name }}"
+project = "{{ cookiecutter.__package_name }}"
+project_copyright = "{{ cookiecutter.__year }}, Chair for Design Automation, Technical University of Munich"
+author = "Chair for Design Automation, Technical University of Munich"
 version = release = importlib.metadata.version("{{ cookiecutter.__project_slug }}")
 
 extensions = [

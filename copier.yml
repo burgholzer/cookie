@@ -17,18 +17,23 @@ project_name:
 # [[[cog print(cc.org.yaml()) ]]]
 org:
   type: str
-  help: The name of your (GitHub?) org
+  help: The name of your GitHub org
   # [[[end]]]
-  validator: >-
-    {% if not org %} You must provide a org for the project. It might just be
-    your user name on the site (like GitHub) you are targeting. {% endif %}
+  default: "cda-tum"
+
+# [[[cog print(cc.namespace.yaml()) ]]]
+namespace:
+  type: str
+  help: The name of your package namespace (e.g., mqt, mnt, mmft, etc.)
+  # [[[end]]]
+  default: "mqt"
 
 # [[[cog print(cc.url.yaml()) ]]]
 url:
   type: str
-  help: The url to your GitHub or GitLab repository
+  help: The url to your GitHub repository
   # [[[end]]]
-  default: "https://github.com/{{ org }}/{{ project_name }}"
+  default: "https://github.com/{{ org }}/{{ namespace }}-{{ project_name }}"
 
 # [[[cog print(cc.full_name.yaml()) ]]]
 full_name:
@@ -57,38 +62,14 @@ project_short_description:
   # [[[end]]]
   default: A great package.
 
-# [[[cog print(cc.license.yaml()) ]]]
-license:
-  help: Select a license
-  choices:
-    - BSD
-    - Apache
-    - MIT
-  # [[[end]]]
-
 # [[[cog print(cc.backend.yaml()) ]]]
 backend:
   help: Choose a build backend
   choices:
     "Hatchling                      - Pure Python (recommended)": hatch
-    "Flit-core                      - Pure Python (minimal)": flit
-    "PDM-backend                    - Pure Python": pdm
-    "Whey                           - Pure Python": whey
-    "Poetry                         - Pure Python": poetry
-    "Setuptools with pyproject.toml - Pure Python": setuptools621
-    "Setuptools with setup.py       - Pure Python": setuptools
-    "Setuptools and pybind11        - Compiled C++": pybind11
     "Scikit-build-core              - Compiled C++ (recommended)": skbuild
-    "Meson-python                   - Compiled C++ (also good)": mesonpy
     "Maturin                        - Compiled Rust (recommended)": maturin
   # [[[end]]]
-
-# [[[cog print(cc.vcs.yaml()) ]]]
-vcs:
-  type: bool
-  help: Use version control for versioning
-  # [[[end]]]
-  when: "{{ backend not in ['whey', 'maturin', 'mesonpy'] }}"
 
 _templates_suffix: ""
 

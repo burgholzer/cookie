@@ -8,9 +8,6 @@
 [![PyPI platforms][pypi-platforms]][pypi-link]
 
 [![GitHub Discussion][github-discussions-badge]][github-discussions-link]
-{%- if cookiecutter.org | lower == "scikit-hep" %}
-[![Scikit-HEP][sk-badge]](https://scikit-hep.org/)
-{%- endif %}
 
 <!-- SPHINX-START -->
 
@@ -26,8 +23,5 @@
 [pypi-version]:             https://img.shields.io/pypi/v/{{cookiecutter.project_name}}
 [rtd-badge]:                https://readthedocs.org/projects/{{cookiecutter.project_name}}/badge/?version=latest
 [rtd-link]:                 https://{{cookiecutter.project_name}}.readthedocs.io/en/latest/?badge=latest
-{%- if cookiecutter.org | lower == "scikit-hep" %}
-[sk-badge]:                 https://scikit-hep.org/assets/images/Scikit--HEP-Project-blue.svg
-{%- endif %}
 
 <!-- prettier-ignore-end -->

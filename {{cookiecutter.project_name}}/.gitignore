@@ -5,6 +5,8 @@ __pycache__/
 
 # C extensions
 *.so
+.ccache/
+cmake-build-*
 
 # Distribution / packaging
 .Python
@@ -156,3 +158,6 @@ Thumbs.db
 # Common editor files
 *~
 *.swp
+
+.idea/
+.vscode/
