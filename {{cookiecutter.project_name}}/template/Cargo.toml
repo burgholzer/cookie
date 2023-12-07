@@ -1,5 +1,5 @@
 [package]
-name = "{{ cookiecutter.__project_slug }}"
+name = "{{ cookiecutter.namespace }}-{{ cookiecutter.__project_slug }}"
 version = "0.1.0"
 edition = "2018"
 

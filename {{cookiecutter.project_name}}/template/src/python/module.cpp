@@ -1,8 +1,11 @@
+#include "add.hpp"
+
 #include <pybind11/pybind11.h>
 
-int add(int i, int j) { return i + j; }
+namespace {{ cookiecutter.namespace }} {
 
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 PYBIND11_MODULE(_core, m) {
   m.doc() = R"pbdoc(
@@ -26,3 +29,5 @@ PYBIND11_MODULE(_core, m) {
       Some other explanation about the subtract function.
   )pbdoc");
 }
+
+} // namespace {{ cookiecutter.namespace }}

@@ -17,18 +17,23 @@ project_name:
 # [[[cog print(cc.org.yaml()) ]]]
 org:
   type: str
-  help: The name of your (GitHub?) org
+  help: The name of your GitHub org
   # [[[end]]]
-  validator: >-
-    {% if not org %} You must provide a org for the project. It might just be
-    your user name on the site (like GitHub) you are targeting. {% endif %}
+  default: "cda-tum"
+
+# [[[cog print(cc.namespace.yaml()) ]]]
+namespace:
+  type: str
+  help: The name of your package namespace (e.g., mqt, mnt, mmft, etc.)
+  # [[[end]]]
+  default: "mqt"
 
 # [[[cog print(cc.url.yaml()) ]]]
 url:
   type: str
-  help: The url to your GitHub or GitLab repository
+  help: The url to your GitHub repository
   # [[[end]]]
-  default: "https://github.com/{{ org }}/{{ project_name }}"
+  default: "https://github.com/{{ org }}/{{ namespace }}-{{ project_name }}"
 
 # [[[cog print(cc.full_name.yaml()) ]]]
 full_name:

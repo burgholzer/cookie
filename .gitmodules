@@ -1,0 +1,3 @@
+[submodule ".nox/lint-skbuild/tmp/cookie-skbuild/extern/mqt-core"]
+	path = .nox/lint-skbuild/tmp/cookie-skbuild/extern/mqt-core
+	url = https://github.com/cda-tum/mqt-core.git

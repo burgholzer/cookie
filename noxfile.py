@@ -49,7 +49,7 @@ def rmtree_ro(path: Path) -> None:
 
 
 def get_expected_version(backend: str) -> str:
-    return "0.2.3" if backend not in {"whey", "maturin", "mesonpy"} else "0.1.0"
+    return "0.1.0" if backend == "maturin" else "0.2.3"
 
 
 def make_copier(session: nox.Session, backend: str) -> Path:
@@ -66,11 +66,9 @@ def make_copier(session: nox.Session, backend: str) -> Path:
         "--UNSAFE",
         "--vcs-ref=HEAD",
         f"--data=project_name=cookie-{backend}",
-        "--data=org=org",
         f"--data=backend={backend}",
         "--data=full_name=My Name",
         "--data=email=me@email.com",
-        "--data=license=MIT",
     )
 
     init_git(session, package_dir)
@@ -135,7 +133,7 @@ def init_git(session: nox.Session, package_dir: Path) -> None:
         "-c",
         "user.name=Bot",
         "-c",
-        "user.email=bot@scikit-hep.org",
+        "user.email=bot@cda-tum.de",
         "commit",
         "-qm",
         "feat: initial version",
@@ -214,7 +212,7 @@ def tests(session: nox.Session, backend: str) -> None:
     cookie = make_cookie(session, backend)
     session.chdir(cookie)
 
-    name = f"cookie-{backend}"
+    name = f"mqt.cookie-{backend}"
     session.install(".[test]")
     session.run("python", "-m", "pytest", "-ra")
     version = session.run(
