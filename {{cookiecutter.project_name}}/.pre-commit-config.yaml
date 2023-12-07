@@ -1,6 +1,6 @@
 ci:
-  autoupdate_commit_msg: "chore: update pre-commit hooks"
-  autofix_commit_msg: "style: pre-commit fixes"
+  autoupdate_commit_msg: "⬆️🪝 update pre-commit hooks"
+  autofix_commit_msg: "🎨 pre-commit fixes"
 
 repos:
   - repo: https://github.com/adamchainz/blacken-docs
@@ -46,16 +46,6 @@ repos:
         args: ["--fix", "--show-fixes"]
       - id: ruff-format
 
-{%- if cookiecutter.backend == "setuptools" or cookiecutter.backend == "pybind11" %}
-
-  - repo: https://github.com/asottile/setup-cfg-fmt
-    rev: "v2.5.0"
-    hooks:
-      - id: setup-cfg-fmt
-        args: [--include-version-classifiers, --max-py-version=3.12]
-
-{%- endif %}
-
 {%- if cookiecutter.backend in ["pybind11", "skbuild", "mesonpy"] %}
 
   - repo: https://github.com/pre-commit/mirrors-clang-format
@@ -90,17 +80,8 @@ repos:
       - id: disallow-caps
         name: Disallow improper capitalization
         language: pygrep
-        entry: PyBind|Numpy|Cmake|CCache|Github|PyTest
+        entry: PyBind|Numpy|Cmake|CCache|Github|PyTest|Mqt|Tum
         exclude: .pre-commit-config.yaml
-
-{%- if cookiecutter.backend in ["setuptools", "pybind11"] %}
-
-  - repo: https://github.com/mgedmin/check-manifest
-    rev: "0.49"
-    hooks:
-      - id: check-manifest
-        stages: [manual]
-{%- endif %}
 
 {%- if cookiecutter.backend == "skbuild" %}
 
@@ -126,10 +107,6 @@ repos:
   - repo: https://github.com/python-jsonschema/check-jsonschema
     rev: 0.27.0
     hooks:
-{%- if cookiecutter.__ci == "github" %}
       - id: check-dependabot
       - id: check-github-workflows
-{%- elif cookiecutter.__ci == "gitlab" %}
-      - id: check-gitlab-ci
-{%- endif %}
       - id: check-readthedocs

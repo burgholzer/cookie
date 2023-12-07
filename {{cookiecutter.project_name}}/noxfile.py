@@ -1,19 +1,14 @@
 from __future__ import annotations
 
 import argparse
-{%- if cookiecutter.backend != "pybind11" %}
 import shutil
 from pathlib import Path
-{%- endif %}
 
 import nox
 
-{% if cookiecutter.backend != "pybind11" -%}
 DIR = Path(__file__).parent.resolve()
 
-{% endif -%}
-
-nox.options.sessions = ["lint", "pylint", "tests"]
+nox.options.sessions = ["lint", "tests"]
 
 
 @nox.session
@@ -25,17 +20,6 @@ def lint(session: nox.Session) -> None:
     session.run(
         "pre-commit", "run", "--all-files", "--show-diff-on-failure", *session.posargs
     )
-
-
-@nox.session
-def pylint(session: nox.Session) -> None:
-    """
-    Run PyLint.
-    """
-    # This needs to be installed into the package environment, and is slower
-    # than a pre-commit check
-    session.install(".", "pylint")
-    session.run("pylint", "{{ cookiecutter.__project_slug }}", *session.posargs)
 
 
 @nox.session
@@ -108,9 +92,6 @@ def build_api_docs(session: nox.Session) -> None:
     )
 
 
-{%- if cookiecutter.backend != "pybind11" %}
-
-
 @nox.session
 def build(session: nox.Session) -> None:
     """
@@ -123,5 +104,3 @@ def build(session: nox.Session) -> None:
 
     session.install("build")
     session.run("python", "-m", "build")
-
-{%- endif %}

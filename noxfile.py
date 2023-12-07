@@ -1,7 +1,5 @@
 """
-Nox runner for cookie & sp-repo-review.
-
-sp-repo-review checks start with "rr-".
+Nox runner for cookie
 """
 
 
@@ -35,7 +33,6 @@ JOB_FILE = """\
 default_context:
   project_name: cookie-{backend}
   backend: {backend}
-  vcs: {vcs}
 """
 
 
@@ -51,11 +48,11 @@ def rmtree_ro(path: Path) -> None:
         shutil.rmtree(path, onerror=_remove_readonly)
 
 
-def get_expected_version(backend: str, vcs: bool) -> str:
-    return "0.2.3" if vcs and backend not in {"whey", "maturin", "mesonpy"} else "0.1.0"
+def get_expected_version(backend: str) -> str:
+    return "0.2.3" if backend not in {"whey", "maturin", "mesonpy"} else "0.1.0"
 
 
-def make_copier(session: nox.Session, backend: str, vcs: bool) -> None:
+def make_copier(session: nox.Session, backend: str) -> Path:
     package_dir = Path(f"copy-{backend}")
     if package_dir.exists():
         rmtree_ro(package_dir)
@@ -73,8 +70,7 @@ def make_copier(session: nox.Session, backend: str, vcs: bool) -> None:
         f"--data=backend={backend}",
         "--data=full_name=My Name",
         "--data=email=me@email.com",
-        "--data=license=BSD",
-        f"--data=vcs={vcs}",
+        "--data=license=MIT",
     )
 
     init_git(session, package_dir)
@@ -82,14 +78,12 @@ def make_copier(session: nox.Session, backend: str, vcs: bool) -> None:
     return package_dir
 
 
-def make_cookie(session: nox.Session, backend: str, vcs: bool) -> None:
+def make_cookie(session: nox.Session, backend: str) -> Path:
     package_dir = Path(f"cookie-{backend}")
     if package_dir.exists():
         rmtree_ro(package_dir)
 
-    Path("input.yml").write_text(
-        JOB_FILE.format(backend=backend, vcs=vcs), encoding="utf-8"
-    )
+    Path("input.yml").write_text(JOB_FILE.format(backend=backend), encoding="utf-8")
 
     session.run(
         "cookiecutter",
@@ -103,7 +97,7 @@ def make_cookie(session: nox.Session, backend: str, vcs: bool) -> None:
     return package_dir
 
 
-def make_cruft(session: nox.Session, backend: str, vcs: bool) -> None:
+def make_cruft(session: nox.Session, backend: str) -> Path:
     package_dir = Path(f"cruft-{backend}")
     if package_dir.exists():
         rmtree_ro(package_dir)
@@ -113,7 +107,7 @@ def make_cruft(session: nox.Session, backend: str, vcs: bool) -> None:
 
     session.cd(tmp_dir)
     Path("input.yml").write_text(
-        JOB_FILE.format(backend=backend, pkg=package_dir, vcs=vcs), encoding="utf-8"
+        JOB_FILE.format(backend=backend, pkg=package_dir), encoding="utf-8"
     )
     session.run(
         "cruft",
@@ -153,7 +147,7 @@ def init_git(session: nox.Session, package_dir: Path) -> None:
 IGNORE_FILES = {"__pycache__", ".git", ".copier-answers.yml", ".cruft.json"}
 
 
-def valid_path(path: Path):
+def valid_path(path: Path) -> bool:
     return path.is_file() and not IGNORE_FILES & set(path.parts)
 
 
@@ -178,14 +172,13 @@ def diff_files(p1: Path, p2: Path) -> bool:
 
 
 @nox.session()
-@nox.parametrize("vcs", [False, True], ids=["novcs", "vcs"])
 @nox.parametrize("backend", BACKENDS, ids=BACKENDS)
-def lint(session: nox.Session, backend: str, vcs: bool) -> None:
+def lint(session: nox.Session, backend: str) -> None:
     session.install("cookiecutter", "pre-commit")
 
     tmp_dir = session.create_tmp()
     session.cd(tmp_dir)
-    cookie = make_cookie(session, backend, vcs)
+    cookie = make_cookie(session, backend)
     session.chdir(cookie)
 
     session.run(
@@ -204,7 +197,7 @@ def autoupdate(session: nox.Session, backend: str) -> None:
 
     tmp_dir = session.create_tmp()
     session.cd(tmp_dir)
-    cookie = make_cookie(session, backend, True)
+    cookie = make_cookie(session, backend)
     session.chdir(cookie)
 
     session.run("pre-commit", "autoupdate")
@@ -212,14 +205,13 @@ def autoupdate(session: nox.Session, backend: str) -> None:
 
 
 @nox.session()
-@nox.parametrize("vcs", [False, True], ids=["novcs", "vcs"])
 @nox.parametrize("backend", BACKENDS, ids=BACKENDS)
-def tests(session: nox.Session, backend: str, vcs: bool) -> None:
+def tests(session: nox.Session, backend: str) -> None:
     session.install("cookiecutter")
 
     tmp_dir = session.create_tmp()
     session.cd(tmp_dir)
-    cookie = make_cookie(session, backend, vcs)
+    cookie = make_cookie(session, backend)
     session.chdir(cookie)
 
     name = f"cookie-{backend}"
@@ -231,44 +223,25 @@ def tests(session: nox.Session, backend: str, vcs: bool) -> None:
         f'import importlib.metadata as m; print(m.version("{name}"))',
         silent=True,
     ).strip()
-    expected_version = get_expected_version(backend, vcs)
+    expected_version = get_expected_version(backend)
     assert version == expected_version, f"{version=} != {expected_version=}"
 
 
 @nox.session()
-@nox.parametrize("vcs", [False, True], ids=["novcs", "vcs"])
-@nox.parametrize("backend", ("poetry", "pdm", "hatch"), ids=("poetry", "pdm", "hatch"))
-def native(session: nox.Session, backend: str, vcs: bool) -> None:
-    session.install("cookiecutter", backend)
-
-    tmp_dir = session.create_tmp()
-    session.cd(tmp_dir)
-    cookie = make_cookie(session, backend, vcs)
-    session.chdir(cookie)
-
-    if backend == "hatch":
-        session.run(backend, "run", "test")
-    else:
-        session.run(backend, "install")
-        session.run(backend, "run", "pytest")
-
-
-@nox.session()
-@nox.parametrize("vcs", [False, True], ids=["novcs", "vcs"])
 @nox.parametrize("backend", BACKENDS, ids=BACKENDS)
-def dist(session: nox.Session, backend: str, vcs: bool) -> None:
+def dist(session: nox.Session, backend: str) -> None:
     session.install("cookiecutter", "build", "twine")
 
     tmp_dir = session.create_tmp()
     session.cd(tmp_dir)
-    cookie = make_cookie(session, backend, vcs)
+    cookie = make_cookie(session, backend)
     session.chdir(cookie)
 
     session.run("python", "-m", "build", silent=True)
     (sdist,) = Path("dist").glob("*.tar.gz")
     (wheel,) = Path("dist").glob("*.whl")
 
-    expected_version = get_expected_version(backend, vcs)
+    expected_version = get_expected_version(backend)
     if expected_version not in str(wheel):
         session.error(f"{wheel} must be version {expected_version}")
 
@@ -278,7 +251,7 @@ def dist(session: nox.Session, backend: str, vcs: bool) -> None:
     with tarfile.open(sdist) as tf:
         names = tf.getnames()
     if not any(n.endswith("LICENSE") for n in names):
-        msg = f"license file missing from {backend} vcs={vcs}'s sdist. Found: {names}"
+        msg = f"license file missing from {backend}'s sdist. Found: {names}"
         session.error(msg)
 
     # Check for LICENSE in wheel
@@ -292,7 +265,7 @@ def dist(session: nox.Session, backend: str, vcs: bool) -> None:
         msg = f"Should not have anything in the License slot, got {license_fields}"
         session.error(msg)
     if not any(n.endswith("LICENSE") for n in names):
-        msg = f"license file missing from {backend} vcs={vcs}'s wheel. Found: {names}"
+        msg = f"license file missing from {backend}'s wheel. Found: {names}"
         session.error(msg)
 
     dist = DIR / "dist"
@@ -302,14 +275,13 @@ def dist(session: nox.Session, backend: str, vcs: bool) -> None:
 
 
 @nox.session(name="nox")
-@nox.parametrize("vcs", [False, True], ids=["novcs", "vcs"])
 @nox.parametrize("backend", BACKENDS, ids=BACKENDS)
-def nox_session(session: nox.Session, backend: str, vcs: bool) -> None:
+def nox_session(session: nox.Session, backend: str) -> None:
     session.install("cookiecutter", "nox")
 
     tmp_dir = session.create_tmp()
     session.cd(tmp_dir)
-    cookie = make_cookie(session, backend, vcs)
+    cookie = make_cookie(session, backend)
     session.chdir(cookie)
 
     if session.posargs:
@@ -326,14 +298,13 @@ def compare_copier(session):
     session.cd(tmp_dir)
 
     for backend in BACKENDS:
-        for vcs in (False, True):
-            cookie = make_cookie(session, backend, vcs)
-            copier = make_copier(session, backend, vcs)
+        cookie = make_cookie(session, backend)
+        copier = make_copier(session, backend)
 
-            if diff_files(cookie, copier):
-                session.log(f"{backend} {vcs=} passed")
-            else:
-                session.error(f"{backend} {vcs=} files are not the same!")
+        if diff_files(cookie, copier):
+            session.log(f"{backend} passed")
+        else:
+            session.error(f"{backend} files are not the same!")
 
 
 @nox.session()
@@ -344,14 +315,13 @@ def compare_cruft(session):
     session.cd(tmp_dir)
 
     for backend in BACKENDS:
-        for vcs in (False, True):
-            cookie = make_cookie(session, backend, vcs)
-            cruft = make_cruft(session, backend, vcs)
+        cookie = make_cookie(session, backend)
+        cruft = make_cruft(session, backend)
 
-            if diff_files(cookie, cruft):
-                session.log(f"{backend} {vcs=} passed")
-            else:
-                session.error(f"{backend} {vcs=} files are not the same!")
+        if diff_files(cookie, cruft):
+            session.log(f"{backend} passed")
+        else:
+            session.error(f"{backend} files are not the same!")
 
 
 PC_VERS = re.compile(
