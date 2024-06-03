@@ -31,7 +31,7 @@ options:
 ```yaml
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "v4.5.0"
+    rev: "v4.6.0"
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -111,7 +111,7 @@ Here is the snippet to add the formatter to your `.pre-commit-config.yml`
 
 ```yaml
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: "v0.1.6"
+  rev: "v0.4.7"
   hooks:
     #  id: ruff would go here if using both
     - id: ruff-format
@@ -141,7 +141,7 @@ Here is the snippet to add Black to your `.pre-commit-config.yml`:
 
 ```yaml
 - repo: https://github.com/psf/black-pre-commit-mirror
-  rev: "23.11.0"
+  rev: "24.4.2"
   hooks:
     - id: black
 ```
@@ -201,7 +201,7 @@ pre-commit hook.
 
 ```yaml
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: "v0.1.6"
+  rev: "v0.4.7"
   hooks:
     - id: ruff
       args: ["--fix", "--show-fixes"]
@@ -392,7 +392,7 @@ the flake8 addition for pre-commit, with the `bugbear` plugin:
 
 ```yaml
 - repo: https://github.com/pycqa/flake8
-  rev: "6.1.0"
+  rev: "7.0.0"
   hooks:
     - id: flake8
       additional_dependencies: [flake8-bugbear]
@@ -465,7 +465,7 @@ pre-commit config will work:
 
 ```yaml
 - repo: https://github.com/PyCQA/isort
-  rev: "5.12.0"
+  rev: "5.13.2"
   hooks:
     - id: isort
 ```
@@ -490,7 +490,7 @@ when clearly better (please always use them, they are faster) if you set
 
 ```yaml
 - repo: https://github.com/asottile/pyupgrade
-  rev: "v3.15.0"
+  rev: "v3.15.2"
   hooks:
     - id: pyupgrade
       args: ["--py38-plus"]
@@ -535,7 +535,7 @@ The MyPy addition for pre-commit:
 
 ```yaml
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: "v1.7.1"
+  rev: "v1.10.0"
   hooks:
     - id: mypy
       files: src
@@ -631,7 +631,7 @@ additional_dependencies: ["setuptools_scm[toml]"]
 run all checks:
 
 ```yaml
-- uses: pre-commit/action@v3.0.0
+- uses: pre-commit/action@v3.0.1
   with:
     extra_args: --show-diff-on-failure --all-files --hook-stage manual
 ```
@@ -665,7 +665,7 @@ than a list of "valid" words. To use:
 
 ```yaml
 - repo: https://github.com/codespell-project/codespell
-  rev: "v2.2.6"
+  rev: "v2.3.0"
   hooks:
     - id: codespell
       args: ["-L", "sur,nd"]
@@ -747,7 +747,7 @@ following pre-commit config:
 
 ```yaml
 - repo: https://github.com/pre-commit/mirrors-clang-format
-  rev: "v17.0.6"
+  rev: "v18.1.5"
   hooks:
     - id: clang-format
       types_or: [c++, c, cuda]
@@ -764,7 +764,7 @@ If you have shell scripts, you can protect against common mistakes using
 
 ```yaml
 - repo: https://github.com/shellcheck-py/shellcheck-py
-  rev: "v0.9.0.6"
+  rev: "v0.10.0.1"
   hooks:
     - id: shellcheck
 ```
@@ -776,7 +776,7 @@ number of different file types. An example of usage:
 
 ```yaml
 - repo: https://github.com/pre-commit/mirrors-prettier
-  rev: "v3.1.0"
+  rev: "v4.0.0-alpha.3-1"
   hooks:
     - id: prettier
       types_or: [yaml, markdown, html, css, scss, javascript, json]
@@ -892,7 +892,7 @@ You also might like the following hook, which cleans Jupyter outputs:
 
 ```yaml
 - repo: https://github.com/kynan/nbstripout
-  rev: "0.6.1"
+  rev: "0.7.1"
   hooks:
     - id: nbstripout
 ```

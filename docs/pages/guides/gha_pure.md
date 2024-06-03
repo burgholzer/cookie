@@ -77,7 +77,7 @@ dist:
     - name: Build SDist and wheel
       run: pipx run build
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         path: dist/*
 
@@ -119,7 +119,7 @@ later in the upload action for the release job, as well).
 > ```yaml
 > steps:
 >   - uses: actions/checkout@v4
->   - uses: hynek/build-and-inspect-python-package@v1
+>   - uses: hynek/build-and-inspect-python-package@v2
 > ```
 >
 > The artifact it produces is named `Packages`, so that's what you need to use
@@ -140,7 +140,7 @@ publish:
   runs-on: ubuntu-latest
   if: github.event_name == 'release' && github.event.action == 'published'
   steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: artifact
         path: dist
@@ -166,7 +166,7 @@ publish:
   runs-on: ubuntu-latest
   if: github.event_name == 'release' && github.event.action == 'published'
   steps:
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4
       with:
         name: artifact
         path: dist
@@ -217,7 +217,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: hynek/build-and-inspect-python-package@v1
+      - uses: hynek/build-and-inspect-python-package@v2
 
   publish:
     needs: [dist]
@@ -228,7 +228,7 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
 
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: Packages
           path: dist
@@ -263,7 +263,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: hynek/build-and-inspect-python-package@v1
+      - uses: hynek/build-and-inspect-python-package@v2
 
   publish:
     needs: [dist]
@@ -271,7 +271,7 @@ jobs:
     if: github.event_name == 'release' && github.event.action == 'published'
 
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: Packages
           path: dist
