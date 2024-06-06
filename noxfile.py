@@ -25,7 +25,6 @@ from typing import Any
 import nox
 
 nox.needs_version = ">=2024.3.2"
-nox.options.sessions = ["rr_lint", "rr_tests", "rr_pylint", "readme"]
 nox.options.default_venv_backend = "uv|virtualenv"
 
 DIR = Path(__file__).parent.resolve()
@@ -462,71 +461,3 @@ def gha_bump(session: nox.Session) -> None:
                     f"uses: {repo}@{old_version}", f"uses: {repo}@{new_version}"
                 )
                 page.write_text(txt)
-
-
-# -- Repo review --
-
-
-@nox.session
-def readme(session: nox.Session) -> None:
-    """
-    Update the readme with cog. Pass --check to check instead.
-    """
-
-    args = session.posargs or ["-r"]
-
-    session.install("-e.", "cogapp", "repo-review>=0.8")
-    session.run("cog", "-P", *args, "README.md")
-
-
-@nox.session(reuse_venv=True)
-def rr_run(session: nox.Session) -> None:
-    """
-    Run sp-repo-review.
-    """
-
-    session.install("-e.[cli]")
-    session.run("python", "-m", "repo_review", *session.posargs)
-
-
-@nox.session
-def rr_lint(session: nox.Session) -> None:
-    """
-    Run the linter.
-    """
-    session.install("pre-commit")
-    session.run("pre-commit", "run", "--all-files", *session.posargs)
-
-
-@nox.session
-def rr_pylint(session: nox.Session) -> None:
-    """
-    Run PyLint.
-    """
-    # This needs to be installed into the package environment, and is slower
-    # than a pre-commit check
-    session.install("-e.[cli]", "pylint")
-    session.run("pylint", "src", *session.posargs)
-
-
-@nox.session
-def rr_tests(session: nox.Session) -> None:
-    """
-    Run the unit and regular tests for sp-repo-review.
-    """
-    session.install("-e.[test,cli]")
-    session.run("pytest", *session.posargs)
-
-
-@nox.session(reuse_venv=True)
-def rr_build(session: nox.Session) -> None:
-    """
-    Build an SDist and wheel for sp-repo-review.
-    """
-
-    build_p = DIR.joinpath("build")
-    if build_p.exists():
-        shutil.rmtree(build_p)
-
-    session.install("build")
-    session.run("python", "-m", "build")
