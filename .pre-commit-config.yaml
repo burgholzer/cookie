@@ -68,7 +68,6 @@ repos:
     rev: "v2.3.0"
     hooks:
       - id: codespell
-        exclude: ^Gemfile\.lock$
         args: ["-Lnd", "-w"]
 
   - repo: local
@@ -82,9 +81,3 @@ repos:
         name: Disallow _ in permalinks
         language: pygrep
         entry: "^permalink:.*_.*"
-      - id: cog
-        name: Cog the pages
-        language: python
-        entry: cog -P -r -I ./helpers
-        files: "^docs/pages/guides/(packaging_compiled|docs|tasks|gha_basic).md|^copier.yml"
-        additional_dependencies: [cogapp, cookiecutter]
