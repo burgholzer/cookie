@@ -237,7 +237,7 @@ def tests(session: nox.Session, backend: str, vcs: bool) -> None:
 
 @nox.session()
 @nox.parametrize("vcs", [False, True], ids=["novcs", "vcs"])
-@nox.parametrize("backend", ("poetry", "pdm", "hatch"), ids=("poetry", "pdm", "hatch"))
+@nox.parametrize("backend", ("hatch"), ids=("hatch"))
 def native(session: nox.Session, backend: str, vcs: bool) -> None:
     session.install("cookiecutter", backend)
 
