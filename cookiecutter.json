@@ -6,7 +6,6 @@
   "email": "me@email.com",
   "project_short_description": "A great package.",
   "backend": ["hatch", "skbuild", "maturin"],
-  "vcs": true,
   "__year": "{% now 'utc', '%Y' %}",
   "__project_slug": "{{ cookiecutter.project_name | lower | replace('-', '_') | replace('.', '_') }}",
   "__type": "{{ 'compiled' if cookiecutter.backend in ['skbuild', 'maturin'] else 'pure' }}",
@@ -23,7 +22,6 @@
       "hatch": "Hatchling                      - Pure Python (recommended)",
       "skbuild": "Scikit-build-core              - Compiled C++ (recommended)",
       "maturin": "Maturin                       - Compiled Rust (recommended)"
-    },
-    "vcs": "Use version control for versioning"
+    }
   }
 }

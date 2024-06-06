@@ -66,13 +66,6 @@ backend:
     "Maturin           - Compiled Rust (recommended)": maturin
   # [[[end]]]
 
-# [[[cog print(cc.vcs.yaml()) ]]]
-vcs:
-  type: bool
-  help: Use version control for versioning
-  # [[[end]]]
-  when: "{{ backend not in ['whey', 'maturin', 'mesonpy'] }}"
-
 _templates_suffix: ""
 
 _subdirectory: "{% raw %}{{cookiecutter.project_name}}{% endraw %}"

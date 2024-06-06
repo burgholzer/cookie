@@ -48,13 +48,13 @@ jobs:
         run: uv pip install nox
 
       - name: Test scikit-build
-        run: nox -s 'tests(skbuild, novcs)' -s 'tests(skbuild, vcs)'
+        run: nox -s 'tests(skbuild)'
 
       - name: Test maturin
-        run: nox -s 'tests(maturin, novcs)'
+        run: nox -s 'tests(maturin)'
 
       - name: Test hatch
-        run: nox -s 'tests(hatch, novcs)' -s 'tests(hatch, vcs)'
+        run: nox -s 'tests(hatch)'
 
       - name: Compare copier template generation
         run: nox -s compare_copier
@@ -84,18 +84,18 @@ jobs:
 
       - name: Test scikit-build
         run: |
-          nox -s 'nox(skbuild, vcs)'
-          nox -s 'nox(skbuild, vcs)' -- docs
+          nox -s 'nox(skbuild)'
+          nox -s 'nox(skbuild)' -- docs
 
       - name: Test maturin
         run: |
-          nox -s 'nox(maturin, novcs)'
-          nox -s 'nox(maturin, novcs)' -- docs
+          nox -s 'nox(maturin)'
+          nox -s 'nox(maturin)' -- docs
 
       - name: Test hatch
         run: |
-          nox -s 'nox(hatch, vcs)'
-          nox -s 'nox(hatch, vcs)' -- docs
+          nox -s 'nox(hatch)'
+          nox -s 'nox(hatch)' -- docs
 
   dist:
     name: Distribution build

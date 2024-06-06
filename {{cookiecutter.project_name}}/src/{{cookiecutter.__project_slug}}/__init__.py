@@ -1,12 +1,12 @@
 """
-Copyright (c) {{ cookiecutter.__year }} {{ cookiecutter.full_name }}. All rights reserved.
+Copyright (c) {{ cookiecutter.__year }} Chair for Design Automation, Technical University of Munich, Germany. All rights reserved.
 
 {{ cookiecutter.project_name }}: {{ cookiecutter.project_short_description }}
 """
 
 from __future__ import annotations
 
-{%- if cookiecutter.backend in ["setuptools", "pybind11", "hatch", "skbuild", "setuptools621", "flit"] and cookiecutter.vcs %}
+{%- if cookiecutter.backend in ["hatch", "skbuild"] %}
 
 from ._version import version as __version__
 
