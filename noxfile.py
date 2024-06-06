@@ -237,20 +237,14 @@ def tests(session: nox.Session, backend: str, vcs: bool) -> None:
 
 @nox.session()
 @nox.parametrize("vcs", [False, True], ids=["novcs", "vcs"])
-@nox.parametrize("backend", ("hatch"), ids=("hatch"))
-def native(session: nox.Session, backend: str, vcs: bool) -> None:
-    session.install("cookiecutter", backend)
+def native(session: nox.Session, vcs: bool) -> None:
+    session.install("cookiecutter", "hatch")
 
     tmp_dir = session.create_tmp()
     session.cd(tmp_dir)
-    cookie = make_cookie(session, backend, vcs)
+    cookie = make_cookie(session, "hatch", vcs)
     session.chdir(cookie)
-
-    if backend == "hatch":
-        session.run(backend, "run", "test")
-    else:
-        session.run(backend, "install")
-        session.run(backend, "run", "pytest")
+    session.run("hatch", "run", "test")
 
 
 @nox.session()
