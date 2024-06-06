@@ -13,5 +13,4 @@ class CookiecutterNamespace(ContextHook):
             "compiled" if context["backend"] in ["skbuild", "maturin"] else "pure"
         )
         context["__answers"] = context["_copier_conf"]["answers_file"]
-        context["__ci"] = "github" if "github.com" in context["url"] else "gitlab"
         return {"cookiecutter": context}

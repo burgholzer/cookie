@@ -11,7 +11,6 @@
   "__project_slug": "{{ cookiecutter.project_name | lower | replace('-', '_') | replace('.', '_') }}",
   "__type": "{{ 'compiled' if cookiecutter.backend in ['skbuild', 'maturin'] else 'pure' }}",
   "__answers": "",
-  "__ci": "{{ 'github' if 'github.com' in cookiecutter.url else 'gitlab' }}",
   "__prompts__": {
     "project_name": "The name of your project",
     "org": "The name of your (GitHub?) org",
