@@ -37,7 +37,19 @@ classifiers = [
   "Intended Audience :: Science/Research",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  {%- if cookiecutter.backend=="hatch" %}
   "Operating System :: OS Independent",
+  {%- else %}
+  "Operating System :: POSIX :: Linux",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  {%- endif %}
+  {%- if cookiecutter.backend=="skbuild" %}
+  "Programming Language :: C++",
+  {%- elif cookiecutter.backend=="maturin" %}
+  "Programming Language :: Rust",
+  {%- endif %}
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
@@ -46,7 +58,7 @@ classifiers = [
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
-  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
   "Typing :: Typed",
 ]
 {%- if cookiecutter.backend != "maturin" and cookiecutter.vcs or cookiecutter.backend == 'hatch' %}
