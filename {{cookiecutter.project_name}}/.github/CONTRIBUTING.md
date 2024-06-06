@@ -30,14 +30,6 @@ environment for each run.
 
 You can set up a development environment by running:
 
-{% if cookiecutter.backend == "poetry" -%}
-
-```bash
-poetry install
-```
-
-{%- else -%}
-
 ```bash
 python3 -m venv .venv
 source ./.venv/bin/activate
@@ -52,8 +44,6 @@ can instead do:
 py -m venv .venv
 py -m install -v -e .[dev]
 ```
-
-{%- endif %}
 
 # Pre-commit
 
